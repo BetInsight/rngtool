@@ -97,12 +97,7 @@ def rng_tool(args, f_output=None, f_output_raw=None):
         elif f_output_raw:
             f_output_raw.write(struct.pack('>B', rnd_value))
         else:
-            print rnd_value
-
-    # if f_output:
-    #     f_output.close()
-    # if f_output_raw:
-    #     f_output_raw.close()
+            print(rnd_value)
 
 
 if __name__ == '__main__':
