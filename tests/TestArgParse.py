@@ -7,7 +7,7 @@ class TestOptions(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestOptions, self).__init__(*args, **kwargs)
         self.parser = get_argparser()
-        
+
     def test_all(self):
         args = self.parser.parse_args(['-n', '10000'])
         self.assertEqual(10000, args.seq_length)

@@ -7,6 +7,12 @@ import time
 import struct
 import math
 
+try:
+    # Python 2 forward compatibility
+    range = xrange
+except NameError:
+    long = int
+
 
 def str2long(v):
 
@@ -90,7 +96,7 @@ def rng_tool(args, f_output=None, f_output_raw=None):
     if not f_output_raw and args.output_filename and args.raw_output:
         f_output_raw = open(args.output_filename, 'wb')
 
-    for _ in xrange(seq_length):
+    for _ in range(seq_length):
         rnd_value = rnd.randrange(seq_range)
         if f_output:
             f_output.write('{}\n'.format(rnd_value))
