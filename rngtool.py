@@ -6,6 +6,7 @@ import random
 import time
 import struct
 import math
+import re
 
 try:
     # Python 2 forward compatibility
@@ -17,13 +18,20 @@ except NameError:
 def str2long(v):
 
     try:
-        if v.upper().find('B') != -1:
+        if v.upper().startswith('0B'):
             return long(v, 2)
     except ValueError:
         pass
 
     try:
-        if v.upper().find('X') != -1:
+        if v.upper().startswith('0X'):
+            return long(v, 16)
+    except ValueError:
+        pass
+
+    try:
+        if re.match("^[0-9A-F]+$", v.upper()) and \
+                not re.match("^[0-9]+$", v.upper()):
             return long(v, 16)
     except ValueError:
         pass
@@ -42,7 +50,7 @@ def get_argparser():
                         metavar="NUM",
                         type=str2long,
                         required=True)
-    parser.add_argument("-f",
+    parser.add_argument("-f", "-o",
                         help="the name of output file",
                         dest="output_filename",
                         metavar="FILE")
@@ -50,17 +58,17 @@ def get_argparser():
                         help="save used seed to filename",
                         dest="seed_output_filename",
                         metavar="FILE")
-    parser.add_argument("-r",
+    parser.add_argument("-r", "-range",
                         help="range of generated numbers",
                         dest="seq_range",
                         metavar="RANGE",
                         type=str2long)
-    parser.add_argument("-s",
+    parser.add_argument("-s", "-seed",
                         help="initial SEED (generator input value)",
                         dest="seed",
                         metavar="SEED",
                         type=str2long)
-    parser.add_argument("-rw",
+    parser.add_argument("-rw", "-raw",
                         help="raw output from RNG",
                         dest="raw_output",
                         action='store_true')
@@ -69,7 +77,7 @@ def get_argparser():
 
 def rng_tool(args, f_output=None, f_output_raw=None):
 
-    if args.seed:
+    if args.seed is not None:
         seed = args.seed
     else:
         # use fractional seconds

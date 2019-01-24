@@ -18,6 +18,9 @@ class TestOptions(unittest.TestCase):
         args = self.parser.parse_args(['-n', '10000', '-r', '1000'])
         self.assertEqual(1000, args.seq_range)
 
+        args = self.parser.parse_args(['-n', '10000', '-range', '1000'])
+        self.assertEqual(1000, args.seq_range)
+
     def test_args_convert(self):
         args = self.parser.parse_args(['-n', '10000', '-s', '255'])
         self.assertEqual(255, args.seed)
@@ -26,6 +29,9 @@ class TestOptions(unittest.TestCase):
         self.assertEqual(255, args.seed)
         args = self.parser.parse_args(['-n', '10000', '-s', '0XFF'])
         self.assertEqual(255, args.seed)
+
+        args = self.parser.parse_args(['-n', '10000', '-seed', 'ffff'])
+        self.assertEqual(65535, args.seed)
 
         args = self.parser.parse_args(['-n', '10000', '-s', '0b11111111'])
         self.assertEqual(255, args.seed)
