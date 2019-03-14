@@ -94,8 +94,8 @@ def rng_tool(args, f_output=None, f_output_raw=None):
         seq_range = sys.maxsize
 
     if args.seed_output_filename:
-        with open(args.seed_output_filename, 'w') as f_output:
-            f_output.write(str(seed))
+        with open(args.seed_output_filename, 'w') as s_output:
+            s_output.write(str(seed))
     rnd = random.Random(seed)
 
     if not f_output and args.output_filename and not args.raw_output:
