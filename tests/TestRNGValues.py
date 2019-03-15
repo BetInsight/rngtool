@@ -6,7 +6,7 @@ from rngtool import rng_tool, get_argparser
 def format_text_output(text):
     values = text.split('\n')
     # remove empty
-    values = list(filter(lambda x: x is not '', values))
+    values = list(filter(lambda x: x != '', values))
     # cast to long
     values = list(map(lambda x: int(x), values))
     return values
