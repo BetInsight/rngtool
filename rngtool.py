@@ -72,16 +72,15 @@ def get_argparser():
                         help="raw output from RNG",
                         dest="raw_output",
                         action='store_true')
+    parser.add_argument("-chunks",
+                        help="num of chunks",
+                        dest="chunks",
+                        metavar="NUM",
+                        type=str2long)
     return parser
 
 
 def rng_tool(args, f_output=None, f_output_raw=None):
-
-    if args.seed is not None:
-        seed = args.seed
-    else:
-        # use fractional seconds
-        seed = long(time.time() * 256)
 
     seq_length = args.seq_length
 
@@ -93,25 +92,43 @@ def rng_tool(args, f_output=None, f_output_raw=None):
     else:
         seq_range = sys.maxsize
 
-    if args.seed_output_filename:
-        with open(args.seed_output_filename, 'w') as s_output:
-            s_output.write(str(seed))
-    rnd = random.Random(seed)
-
     if not f_output and args.output_filename and not args.raw_output:
         f_output = open(args.output_filename, 'w')
 
     if not f_output_raw and args.output_filename and args.raw_output:
         f_output_raw = open(args.output_filename, 'wb')
 
-    for _ in range(seq_length):
-        rnd_value = rnd.randrange(seq_range)
-        if f_output:
-            f_output.write('{}\n'.format(rnd_value))
-        elif f_output_raw:
-            f_output_raw.write(struct.pack('>B', rnd_value))
+    if args.seed_output_filename:
+        s_output = open(args.seed_output_filename, 'w')
+    else:
+        s_output = None
+
+    chunks = args.chunks if args.chunks else 1
+
+    if chunks > 1 and not s_output:
+        raise argparse.ArgumentTypeError('Output file for seeds not defined')
+
+    for _ in range(chunks):
+
+        if args.seed is not None:
+            seed = args.seed
         else:
-            print(rnd_value)
+            # use fractional seconds
+            seed = long(time.time() * 256)
+
+        if s_output:
+            s_output.write('{}\n'.format(str(seed)))
+
+        rnd = random.Random(seed)
+
+        for _ in range(seq_length):
+            rnd_value = rnd.randrange(seq_range)
+            if f_output:
+                f_output.write('{}\n'.format(rnd_value))
+            elif f_output_raw:
+                f_output_raw.write(struct.pack('>B', rnd_value))
+            else:
+                print(rnd_value)
 
 
 if __name__ == '__main__':
