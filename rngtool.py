@@ -3,7 +3,6 @@
 import sys
 import argparse
 import random
-import time
 import struct
 import math
 import re
@@ -114,7 +113,8 @@ def rng_tool(args, f_output=None, f_output_raw=None):
             seed = args.seed
         else:
             # use fractional seconds
-            seed = long(time.time() * 256)
+            random.seed()
+            seed = int(sys.maxint * random.random())
 
         if s_output:
             s_output.write('{}\n'.format(str(seed)))
