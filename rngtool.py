@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import argparse
@@ -76,6 +76,11 @@ def get_argparser():
                         dest="chunks",
                         metavar="NUM",
                         type=str2long)
+    parser.add_argument("-nowrap",
+                        help="inline output without wraps",
+                        action='store_true',
+                        dest="nowrap"
+                        )
     return parser
 
 
@@ -114,7 +119,10 @@ def rng_tool(args, f_output=None, f_output_raw=None):
         else:
             # use fractional seconds
             random.seed()
-            seed = int(sys.maxint * random.random())
+            try:
+                seed = int(sys.maxint * random.random())
+            except AttributeError:
+                seed = int(sys.maxsize * random.random())
 
         if s_output:
             s_output.write('{}\n'.format(str(seed)))
@@ -124,7 +132,10 @@ def rng_tool(args, f_output=None, f_output_raw=None):
         for _ in range(seq_length):
             rnd_value = rnd.randrange(seq_range)
             if f_output:
-                f_output.write('{}\n'.format(rnd_value))
+                if not args.nowrap:
+                    f_output.write('{}\n'.format(rnd_value))
+                else:
+                    f_output.write('{}'.format(rnd_value))
             elif f_output_raw:
                 f_output_raw.write(struct.pack('>B', rnd_value))
             else:
